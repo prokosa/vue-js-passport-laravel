@@ -34,11 +34,11 @@ class UserController extends BaseController
 	}
 	
 	/**
-	 * @return UserResource
+	 * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
 	 */
 	public function index()
 	{
-		return new UserResource( User::all() );
+		return UserResource::collection(User::all());
 	}
 	
 	/**
