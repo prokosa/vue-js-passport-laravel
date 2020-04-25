@@ -10,43 +10,40 @@
 
 namespace App\Services;
 
-
-use App\Http\Requests\UserRequest;
 use App\Jobs\SendAuthDataJob;
-use App\User;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\User;
 
 class UserService
 {
 	/**
-	 * @param FormRequest $request
+	 * @param array $data
 	 *
 	 * @return User
 	 */
-	public function store( FormRequest $request )
+	public function store( array $data):User
 	{
-		$model     = new User;
-		$model->fill( $request->all() );
+		$model = new User;
+		$model->fill( $data );
 		$model->save();
 		
-	/*	$job = ( new SendAuthDataJob( $model, $password ) )->onQueue( 'user-registration.fifo' )
-			->onConnection( 'sqsfifo' );
-		dispatch( $job );*/
+		/*	$job = ( new SendAuthDataJob( $model, $password ) )->onQueue( 'user-registration.fifo' )
+				->onConnection( 'sqsfifo' );
+			dispatch( $job );*/
 		
 		return $model;
 	}
 	
 	/**
-	 * @param User        $user
-	 * @param UserRequest $request
+	 * @param array $data
+	 * @param User  $user
 	 *
-	 * @return mixed
+	 * @return User
 	 */
-	public function update( User $user, UserRequest $request )
+	public function update( array $data, User $user ):User
 	{
 		$model = User::lockForUpdate()
 			->find( $user->id );
-		$model->fill( $request->all() );
+		$model->fill( $data);
 		$model->save();
 		
 		return $model;
@@ -55,10 +52,11 @@ class UserService
 	/**
 	 * @param User $user
 	 *
+	 * @return bool
 	 * @throws \Exception
 	 */
-	public function destroy( User $user )
+	public function destroy( User $user ):bool
 	{
-		$user->delete();
+		return $user->delete();
 	}
 }

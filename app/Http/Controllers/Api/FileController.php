@@ -10,15 +10,14 @@
 
 namespace App\Http\Controllers;
 
-use App\File;
+use App\Models\File;
 use App\Http\Requests\FileRequest;
 use App\Services\FileService;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Log;
 
-class FileController extends BaseController
+final class FileController extends BaseController
 {
 	/**
 	 * @var FileService
@@ -42,15 +41,6 @@ class FileController extends BaseController
 	public function index()
 	{
 		return view( 'documentation.files.index' );
-	}
-	
-	/**
-	 * @return array|string
-	 * @throws \Throwable
-	 */
-	public function create()
-	{
-		return view( 'documentation.files.create' )->render();
 	}
 	
 	/**
@@ -103,22 +93,6 @@ class FileController extends BaseController
 	/**
 	 * @param File $file
 	 *
-	 * @return array|string
-	 * @throws \Throwable
-	 */
-	public function deleteQuestion( File $file )
-	{
-		return view( 'documentation.files.delete' )
-			->with( [
-				'model' => $this->user->files->where( 'id', $file->id )
-					->first(),
-			] )
-			->render();
-	}
-	
-	/**
-	 * @param File $file
-	 *
 	 * @throws \Throwable
 	 */
 	public function destroy( File $file )
@@ -132,24 +106,6 @@ class FileController extends BaseController
 			[
 				'log' => DB::getQueryLog(),
 			] );
-	}
-	
-	/**
-	 * @return mixed
-	 * @throws \Exception
-	 */
-	public function table()
-	{
-		$data = $this->user->files;
-		
-		return Datatables::of( $data )
-			->addColumn( 'action', 'datatable.files.actions' )
-			->addColumn( 'original_name',
-				function ( $data ) {
-					return $data->pivot->original_name;
-				} )
-			->rawColumns( [ 'action', 'original_name' ] )
-			->make( true );
 	}
 	
 	/**

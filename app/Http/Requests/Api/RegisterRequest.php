@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
-class RegisterRequest extends FormRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+final class RegisterRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.

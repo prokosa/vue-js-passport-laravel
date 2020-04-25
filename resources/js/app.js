@@ -10,9 +10,9 @@ window.Vue = require('vue');
 
 import Vuetify from "../plugins/vuetify"
 
-import VueRouter from "../plugins/vue-router"
+import store from "./store"
 
-//import Vuex from "../plugins/vuex"
+import router from "./router"
 
 /**
  * The following block of code may be used to automatically register your
@@ -23,6 +23,7 @@ import VueRouter from "../plugins/vue-router"
  */
 
 Vue.component('app-container', require('./components/appContainer.vue').default);
+Vue.component('login-form', require('./components/loginForm.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -32,7 +33,7 @@ Vue.component('app-container', require('./components/appContainer.vue').default)
 
 const app = new Vue({
 	vuetify: Vuetify,
-	router: VueRouter,
-	//vuex: Vuex,
+	store,
+	router,
 	el: '#app',
 });

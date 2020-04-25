@@ -19,4 +19,15 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/app', 'AppController@index')->name('app');
+
+Route::get('/clear', function() {
+	Artisan::call('cache:clear');
+	Artisan::call('config:clear');
+	Artisan::call('config:cache');
+	Artisan::call('view:clear');
+	Artisan::call('route:clear');
+	Artisan::call('optimize:clear');
+	return "Cleared!";
+	
+});

@@ -11,13 +11,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\Api\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\UserService;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
-class UserController extends BaseController
+final class UserController extends BaseController
 {
 	/**
 	 * @var UserService
@@ -26,19 +27,21 @@ class UserController extends BaseController
 	
 	/**
 	 * UserController constructor.
+	 *
+	 * @param UserService $user_service
 	 */
-	public function __construct()
+	public function __construct( UserService $user_service )
 	{
 		parent::__construct();
-		$this->userService = app( UserService::class );
+		$this->userService = $user_service;
 	}
 	
 	/**
-	 * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+	 * @return mixed
 	 */
 	public function index()
 	{
-		return UserResource::collection(User::all());
+		return User::paginate( 20 );
 	}
 	
 	/**
@@ -52,24 +55,24 @@ class UserController extends BaseController
 	}
 	
 	/**
-	 * @return array|string
-	 * @throws \Throwable
+	 * @return UserResource
 	 */
-	public function create()
+	public function current()
 	{
-		return view( 'users.create' );
+		return new UserResource( Auth::user() );
 	}
 	
 	/**
 	 * @param UserRequest $request
 	 *
-	 * @return \Illuminate\Http\RedirectResponse
+	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \Throwable
 	 */
 	public function store( UserRequest $request )
 	{
-		$data = DB::transaction( function () use ( $request ) {
-			return $this->userService->store( $request );
+		$validated = $request->validated();
+		$data      = DB::transaction( function () use ( $validated ) {
+			return $this->userService->store( $validated );
 		} );
 		
 		return response()->json( $data, 201 );
@@ -77,29 +80,18 @@ class UserController extends BaseController
 	}
 	
 	/**
-	 * @param User $user
-	 *
-	 * @return array|string
-	 * @throws \Throwable
-	 */
-	public function edit( User $user )
-	{
-		return view( 'users.edit' )
-			->with( [ 'model' => $user ] )
-			->render();
-	}
-	
-	/**
 	 * @param UserRequest $request
 	 * @param User        $user
 	 *
-	 * @return \Illuminate\Http\JsonResponse|object
+	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \Throwable
 	 */
 	public function update( UserRequest $request, User $user )
 	{
-		$data = DB::transaction( function () use ( $user, $request ) {
-			return $this->userService->update( $user, $request );
+		$validated = $request->validated();
+		
+		$data = DB::transaction( function () use ( $user, $validated ) {
+			return $this->userService->update( $validated, $user );
 		} );
 		
 		return response()->json( $data, 202 );

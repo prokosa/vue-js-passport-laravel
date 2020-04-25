@@ -23,19 +23,15 @@ class CreateFilesTable extends Migration
 	{
 		Schema::create( 'files', function ( Blueprint $table ) {
 				$table->increments( 'id' );
-				$table->char( 'hash_sha256', 64 );
-				$table->unsignedInteger( 'creator_id' );
-				$table->string( 'name');
-				$table->uuid('key');
+				$table->unsignedInteger( 'product_id' );
+				$table->uuid('name');
 				$table->char( 'extension', 10 );
-				$table->string( 'mime_type' );
-				$table->unique( 'hash_sha256' );
 				$table->softDeletes();
 				$table->timestamps();
 				
-				$table->foreign( 'creator_id' )
+				$table->foreign( 'product_id' )
 					->references( 'id' )
-					->on( 'users' )
+					->on( 'products' )
 					->onUpdate( 'cascade' )
 					->onDelete( 'cascade' );
 				

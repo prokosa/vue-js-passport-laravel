@@ -8,10 +8,8 @@ use App\Http\Requests\Api\RegisterRequest;
 use App\Services\UserService;
 use App\Http\Requests\Api\LoginRequest;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
-
-class AuthController extends BaseController
+final class AuthController extends BaseController
 {
 	/**
 	 * @var UserService
@@ -34,9 +32,10 @@ class AuthController extends BaseController
 	 */
 	public function register( RegisterRequest $request )
 	{
-		$user             = $this->userService->store( $request );
-		$success['token'] = $user->createToken('authToken')->accessToken;
-		$success['name']  = $user->name;
+		$validated               = $request->validated();
+		$user                    = $this->userService->store( $validated );
+		$success['access_token'] = $user->createToken( 'authToken' )->accessToken;
+		$success['name']         = $user->name;
 		
 		return $this->sendResponse( $success, 'User register successfully.' );
 	}
@@ -57,20 +56,13 @@ class AuthController extends BaseController
 			);
 		}
 		
-		$auth                    = Auth::user()
-			->createToken('authToken');
-		$auth->token->expires_at = Carbon::now()
-			->addDay();
+		$accessToken = Auth::user()
+			->createToken( 'authToken' )->accessToken;
 		
-		$auth->token->save();
-		
-		return response()->json( [
-			'token_type' => 'Bearer',
-			'authToken'      => $auth->accessToken,
-			'expires_at' => Carbon::parse( $auth->token->expires_at )
-				->toDateTimeString(),
-		],
-			200 );
+		return response( [
+			'user'         => Auth::user(),
+			'access_token' => $accessToken,
+		] );
 	}
 	
 	/**

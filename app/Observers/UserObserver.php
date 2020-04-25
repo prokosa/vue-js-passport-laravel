@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\User;
-use Illuminate\Support\Str;
+
+use App\Models\User;
 
 class UserObserver
 {
@@ -16,6 +16,11 @@ class UserObserver
 	 */
 	public function creating( User $model )
 	{
-		$model->key = (string) Str::uuid();
+		if ( !$model->password )
+		{
+			$random          = str_shuffle( 'abcdefghjklmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ234567890!$%^&!$%^&' );
+			$password        = substr( $random, 0, 10 );
+			$model->password = $password;
+		}
 	}
 }

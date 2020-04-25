@@ -74,14 +74,14 @@ class File extends Model
 	 */
 	 public function rfa_versions()
 	 {
-	 	return $this->hasMany( RfaVersion::class);
+	 	return $this->hasMany( Region::class);
 	 }
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
 	public function package_v_library()
 	{
-		return $this->hasMany( PackageVersion::class,'library_id' );
+		return $this->hasMany( Order::class,'library_id' );
 	}
 	
 	/**
@@ -89,7 +89,7 @@ class File extends Model
 	 */
 	public function package_v_properties()
 	{
-		return $this->hasMany( PackageVersion::class,'properties_id' );
+		return $this->hasMany( Order::class,'properties_id' );
 	}
 	
 	/**
@@ -97,7 +97,7 @@ class File extends Model
 	 */
 	public function package_v_image()
 	{
-		return $this->hasMany( PackageVersion::class,'image_id' );
+		return $this->hasMany( Order::class,'image_id' );
 	}
 	
 	/**
@@ -105,7 +105,7 @@ class File extends Model
 	 */
 	public function package_v_size_table()
 	{
-		return $this->hasMany( PackageVersion::class,'size_table_id' );
+		return $this->hasMany( Order::class,'size_table_id' );
 	}
 	
 	/**
@@ -113,7 +113,7 @@ class File extends Model
 	 */
 	public function package_v_search_table()
 	{
-		return $this->hasMany( PackageVersion::class,'search_table_id' );
+		return $this->hasMany( Order::class,'search_table_id' );
 	}
 	
 	/**
@@ -121,7 +121,7 @@ class File extends Model
 	 */
 	public function package_v_description()
 	{
-		return $this->hasMany( PackageVersion::class,'description_id' );
+		return $this->hasMany( Order::class,'description_id' );
 	}
 	
 	//--------------------Custom Attributes--------------------//
